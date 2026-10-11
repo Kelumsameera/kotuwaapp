@@ -9,6 +9,10 @@ const catalogController = require('../controllers/adminCatalogController');
 const categoryController = require('../controllers/categoryController');
 const adminOrderController = require('../controllers/adminOrderController');
 const orderRules = require('../validators/orderValidators');
+const deliveryController = require('../controllers/deliveryController');
+const deliveryRules = require('../validators/deliveryValidators');
+const sellerCenterController = require('../controllers/sellerCenterController');
+const centerRules = require('../validators/sellerCenterValidators');
 const v = require('../validators/adminValidators');
 const shopRules = require('../validators/shopValidators');
 const productRules = require('../validators/productValidators');
@@ -113,6 +117,41 @@ router.put(
   canManageSettings,
   validate({ body: orderRules.shippingRatesBody }),
   asyncHandler(adminOrderController.replaceShippingRates)
+);
+
+// ── Deliveries: all of them, rider assignment, status fixes, report ──
+const canManageDeliveries = authorizeRoles(...rolesWith('deliveries:manage'));
+const subOrderParams = { params: deliveryRules.subOrderParams };
+router.get('/deliveries', canManageDeliveries, validate({ query: deliveryRules.adminDeliveriesQuery }), asyncHandler(deliveryController.adminList));
+router.get('/deliveries-report', canManageDeliveries, validate({ query: deliveryRules.reportQuery }), asyncHandler(deliveryController.adminReport));
+router.get('/deliveries/:subOrderNumber', canManageDeliveries, validate(subOrderParams), asyncHandler(deliveryController.adminGet));
+router.patch(
+  '/deliveries/:subOrderNumber/status',
+  canManageDeliveries,
+  validate({ ...subOrderParams, body: deliveryRules.staffStatusBody }),
+  asyncHandler(deliveryController.adminChangeStatus)
+);
+router.patch(
+  '/deliveries/:subOrderNumber/rider',
+  canManageDeliveries,
+  validate({ ...subOrderParams, body: deliveryRules.assignRiderBody }),
+  asyncHandler(deliveryController.adminAssignRider)
+);
+router.post(
+  '/deliveries/:subOrderNumber/cash-collected',
+  canManageDeliveries,
+  validate(subOrderParams),
+  asyncHandler(deliveryController.adminMarkCashCollected)
+);
+
+// ── Payouts ──────────────────────────────────────────────────────────
+const canApprovePayouts = authorizeRoles(...rolesWith('payouts:approve'));
+router.get('/payouts', canApprovePayouts, validate({ query: centerRules.adminPayoutsQuery }), asyncHandler(sellerCenterController.adminListPayouts));
+router.patch(
+  '/payouts/:id',
+  canApprovePayouts,
+  validate({ params: centerRules.payoutIdParams, body: centerRules.reviewPayoutBody }),
+  asyncHandler(sellerCenterController.adminReviewPayout)
 );
 
 module.exports = router;

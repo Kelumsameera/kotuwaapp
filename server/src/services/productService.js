@@ -132,7 +132,7 @@ function mergeVariants(product, incomingVariants) {
 
     const existing = existingById.get(incoming._id);
     if (!existing) throw badRequest('UNKNOWN_VARIANT', 'A variant in the form does not belong to this product.');
-    return { ...editable, _id: existing._id, stock: existing.stock };
+    return { ...editable, _id: existing._id, stock: existing.stock, lowStockAlertSentAt: existing.lowStockAlertSentAt };
   });
 
   return { merged, newVariantIndexes };

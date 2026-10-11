@@ -46,6 +46,57 @@
       "total": "Order total (including delivery)",
       "cod": "Cash to collect",
       "button": "Open order"
+    },
+    "statusLabel": {
+      "placed": "Placed",
+      "confirmed": "Confirmed",
+      "packed": "Packed",
+      "shipped": "Shipped",
+      "out_for_delivery": "Out for delivery",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "delivery_failed": "Delivery failed",
+      "return_requested": "Return requested",
+      "returned": "Returned"
+    },
+    "statusMessage": {
+      "placed": "Your order has been placed.",
+      "confirmed": "The seller has confirmed your order.",
+      "packed": "Your order is packed and will be sent soon.",
+      "shipped": "Your order has been sent.",
+      "out_for_delivery": "Your order is on its way to you today. Please keep the cash ready.",
+      "delivered": "Your order has been delivered. Thank you for shopping with us!",
+      "cancelled": "Your order has been cancelled.",
+      "delivery_failed": "We could not deliver your order. We will try again or contact you.",
+      "return_requested": "We have received your return request.",
+      "returned": "Your return is complete."
+    },
+    "orderStatusChanged": {
+      "subject": "{{subOrderNumber}}: {{status}}",
+      "note": "Note: {{note}}",
+      "tracking": "Courier: {{courier}} · Tracking number: {{number}}",
+      "button": "View my order"
+    },
+    "sellerOrderUpdate": {
+      "subject": "Customer update on {{subOrderNumber}}",
+      "cancelled": "The customer cancelled this order. The items are back in stock.",
+      "return_requested": "The customer asked to return this order.",
+      "reason": "Reason: {{note}}",
+      "button": "Open order"
+    },
+    "lowStockDigest": {
+      "subject": "Low stock in {{shopName}}",
+      "body": "These items are running low. Add stock so you don't miss online or shop sales:",
+      "left": "{{count}} left",
+      "button": "Open products"
+    },
+    "payoutStatusChanged": {
+      "subject": "Payout update: {{amount}}",
+      "approved": "Your payout of {{amount}} was approved and will be sent to your bank soon.",
+      "rejected": "Your payout request of {{amount}} was not approved. The money is available to request again.",
+      "paid": "Your payout of {{amount}} has been sent to your bank. Reference: {{reference}}",
+      "reason": "Reason: {{reason}}",
+      "button": "Open earnings"
     }
   }
 }

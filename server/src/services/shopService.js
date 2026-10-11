@@ -33,7 +33,7 @@ function checkShopImage(shop, image, field) {
 
 // Updates the seller's own shop. Suspended shops can't change anything.
 // A rejected shop goes back to "pending" so the admin reviews the changes.
-async function updateMyShop(shop, changes) {
+async function updateMyShop(req, shop, changes) {
   if (shop.status === 'suspended') {
     throw forbidden('SHOP_SUSPENDED', 'Your shop is suspended.');
   }
@@ -51,7 +51,20 @@ async function updateMyShop(shop, changes) {
     shop[field] = changes[field] || undefined;
   }
 
-  for (const field of ['name', 'description', 'phone', 'address', 'lowStockThreshold', 'freeShippingThreshold']) {
+  // Bank details decide where money goes, so every change is written to the audit log.
+  if (changes.bankDetails) {
+    const oldAccount = shop.bankDetails?.accountNumber || null;
+    shop.bankDetails = changes.bankDetails;
+    await logAudit(req, {
+      action: 'shop.bank_change',
+      targetModel: 'Shop',
+      targetId: shop._id,
+      before: { accountNumber: oldAccount },
+      after: { accountNumber: changes.bankDetails.accountNumber },
+    });
+  }
+
+  for (const field of ['name', 'description', 'phone', 'address', 'lowStockThreshold', 'freeShippingThreshold', 'deliveryMethods', 'cashierMaxDiscountPercent']) {
     if (changes[field] !== undefined) shop[field] = changes[field];
   }
 

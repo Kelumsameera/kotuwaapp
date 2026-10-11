@@ -23,8 +23,25 @@ const shopSchema = new mongoose.Schema(
     status: { type: String, enum: SHOP_STATUSES, default: 'pending', index: true },
     statusReason: { type: String, trim: true },
 
+    // Which delivery methods this seller offers (the admin can also switch methods off site-wide).
+    deliveryMethods: {
+      selfDelivery: { type: Boolean, default: true },
+      courier: { type: Boolean, default: true },
+    },
+
+    // Where payouts are sent. Only the owner and admins ever see this.
+    bankDetails: {
+      bankName: { type: String, trim: true },
+      branch: { type: String, trim: true },
+      accountName: { type: String, trim: true },
+      accountNumber: { type: String, trim: true },
+    },
+
     // This shop's free-shipping amount in cents. null = use the platform setting.
     freeShippingThreshold: { type: Number, default: null, min: 0 },
+
+    // The most a cashier may take off a POS bill in total, as % of the bill (the owner has no limit).
+    cashierMaxDiscountPercent: { type: Number, default: 10, min: 0, max: 100 },
 
     // Stock at or below this number shows a low-stock alert.
     lowStockThreshold: { type: Number, default: 5, min: 0 },

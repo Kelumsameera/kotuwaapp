@@ -14,10 +14,10 @@ import OrderStatusBadge from "@/components/orders/OrderStatusBadge";
 const STATUSES = ["placed", "confirmed", "packed", "shipped", "out_for_delivery", "delivered", "cancelled", "delivery_failed", "return_requested", "returned"];
 
 // The seller's orders (only their own shop's sub-orders), newest first.
-export default function SellerOrdersList() {
+export default function SellerOrdersList({ initialStatus = "" }) {
   const t = useTranslations();
   const locale = useLocale();
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(initialStatus);
   const { data, error, page, setPage, pageCount } = usePagedList("/seller/orders", { status });
 
   return (

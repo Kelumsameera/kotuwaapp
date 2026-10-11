@@ -1,5 +1,6 @@
 const { z, phone, translatedText, imageInput, emptyToUndefined, objectId, pagination, money } = require('./common');
 const { DISTRICTS } = require('../constants/districts');
+const { bankDetails } = require('./sellerCenterValidators');
 
 const districtKeys = DISTRICTS.map((district) => district.key);
 
@@ -33,8 +34,11 @@ const updateShopBody = z
     logo: imageInput.nullable().optional(),
     banner: imageInput.nullable().optional(),
     lowStockThreshold: z.number().int().min(0).max(10_000).optional(),
+    cashierMaxDiscountPercent: z.number().int().min(0).max(100).optional(),
     // Cents. null = use the platform's free-shipping amount.
     freeShippingThreshold: money.nullable().optional(),
+    deliveryMethods: z.object({ selfDelivery: z.boolean(), courier: z.boolean() }).strict().optional(),
+    bankDetails: bankDetails.optional(),
   })
   .strict();
 

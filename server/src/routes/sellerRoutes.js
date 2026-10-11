@@ -2,6 +2,10 @@ const express = require('express');
 const shopController = require('../controllers/sellerShopController');
 const productController = require('../controllers/sellerProductController');
 const sellerOrderController = require('../controllers/sellerOrderController');
+const deliveryController = require('../controllers/deliveryController');
+const sellerCenterController = require('../controllers/sellerCenterController');
+const centerRules = require('../validators/sellerCenterValidators');
+const deliveryRules = require('../validators/deliveryValidators');
 const orderRules = require('../validators/orderValidators');
 const authenticate = require('../middleware/authenticate');
 const authorizeRoles = require('../middleware/authorizeRoles');
@@ -124,6 +128,22 @@ router.get(
   asyncHandler(sellerOrderController.getOrder)
 );
 
+router.patch(
+  '/orders/:subOrderNumber/status',
+  canManageOrders,
+  loadMyShop,
+  validate({ params: deliveryRules.subOrderParams, body: deliveryRules.staffStatusBody }),
+  asyncHandler(deliveryController.sellerChangeStatus)
+);
+router.post(
+  '/orders/:subOrderNumber/cash-collected',
+  canManageOrders,
+  loadMyShop,
+  validate({ params: deliveryRules.subOrderParams }),
+  asyncHandler(deliveryController.sellerMarkCashCollected)
+);
+router.get('/cod-summary', canManageOrders, loadMyShop, asyncHandler(deliveryController.sellerCodSummary));
+
 // ── Own delivery rates (override the platform defaults) ─────────────
 const canManageShipping = authorizeRoles(...rolesWith('shipping:manage'));
 router.get('/shipping-rates', canManageShipping, loadMyShop, asyncHandler(sellerOrderController.listShippingRates));
@@ -134,6 +154,37 @@ router.put(
   notSuspended,
   validate({ body: orderRules.shippingRatesBody }),
   asyncHandler(sellerOrderController.replaceShippingRates)
+);
+
+// ── Dashboard and low stock ──────────────────────────────────────────
+const canSeeEarnings = authorizeRoles(...rolesWith('earnings:view'));
+router.get('/dashboard', canSeeEarnings, loadMyShop, asyncHandler(sellerCenterController.dashboard));
+router.get('/low-stock', canManageProducts, loadMyShop, asyncHandler(sellerCenterController.lowStock));
+
+// ── Earnings and payouts (never cashiers) ────────────────────────────
+const canRequestPayouts = authorizeRoles(...rolesWith('payouts:request'));
+router.get('/earnings', canSeeEarnings, loadMyShop, validate({ query: centerRules.earningsQuery }), asyncHandler(sellerCenterController.earnings));
+router.get('/payouts', canSeeEarnings, loadMyShop, validate({ query: centerRules.payoutsQuery }), asyncHandler(sellerCenterController.payouts));
+router.post('/payouts', canRequestPayouts, loadMyShop, approvedOnly, asyncHandler(sellerCenterController.requestPayout));
+
+// ── Staff (cashier accounts) ─────────────────────────────────────────
+const canManageStaff = authorizeRoles(...rolesWith('staff:manage'));
+const staffId = { params: centerRules.staffIdParams };
+router.get('/staff', canManageStaff, loadMyShop, asyncHandler(sellerCenterController.listStaff));
+router.post('/staff', canManageStaff, loadMyShop, notSuspended, validate({ body: centerRules.createCashierBody }), asyncHandler(sellerCenterController.createStaff));
+router.patch(
+  '/staff/:id/status',
+  canManageStaff,
+  loadMyShop,
+  validate({ ...staffId, body: centerRules.staffStatusBody }),
+  asyncHandler(sellerCenterController.setStaffStatus)
+);
+router.post(
+  '/staff/:id/password',
+  canManageStaff,
+  loadMyShop,
+  validate({ ...staffId, body: centerRules.staffPasswordBody }),
+  asyncHandler(sellerCenterController.resetStaffPassword)
 );
 
 module.exports = router;

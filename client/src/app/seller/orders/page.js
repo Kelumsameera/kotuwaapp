@@ -1,6 +1,7 @@
 import SellerOrdersList from "@/components/seller/SellerOrdersList";
 
-// /seller/orders
-export default function SellerOrdersPage() {
-  return <SellerOrdersList />;
+// /seller/orders?status=placed
+export default async function SellerOrdersPage({ searchParams }) {
+  const { status } = await searchParams;
+  return <SellerOrdersList initialStatus={typeof status === "string" ? status : ""} />;
 }

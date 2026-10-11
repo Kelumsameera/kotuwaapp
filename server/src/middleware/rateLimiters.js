@@ -46,4 +46,15 @@ const checkoutLimiter = createLimiter({
   keyGenerator: (req) => `checkout:${req.user?._id || req.ip}`,
 });
 
-module.exports = { globalLimiter, loginLimiter, emailActionLimiter, refreshLimiter, uploadLimiter, checkoutLimiter };
+// For the public tracking page: stops guessing order numbers and phone numbers.
+const trackingLimiter = createLimiter({ windowMs: FIFTEEN_MINUTES, max: 10 });
+
+module.exports = {
+  globalLimiter,
+  loginLimiter,
+  emailActionLimiter,
+  refreshLimiter,
+  uploadLimiter,
+  checkoutLimiter,
+  trackingLimiter,
+};

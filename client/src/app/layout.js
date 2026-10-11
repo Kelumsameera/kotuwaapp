@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import "./globals.css";
 
 const notoSans = Noto_Sans({ variable: "--font-noto-sans", subsets: ["latin"] });
@@ -34,6 +35,7 @@ export default async function RootLayout({ children }) {
             <CartProvider>
               <Header />
               <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+              <Footer />
             </CartProvider>
           </AuthProvider>
         </NextIntlClientProvider>

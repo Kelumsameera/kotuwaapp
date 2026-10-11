@@ -49,7 +49,18 @@ function serializeShop(shop) {
     status: shop.status,
     statusReason: shop.statusReason || '',
     lowStockThreshold: shop.lowStockThreshold,
+    cashierMaxDiscountPercent: shop.cashierMaxDiscountPercent ?? 10,
     freeShippingThreshold: shop.freeShippingThreshold ?? null,
+    bankDetails: {
+      bankName: shop.bankDetails?.bankName || '',
+      branch: shop.bankDetails?.branch || '',
+      accountName: shop.bankDetails?.accountName || '',
+      accountNumber: shop.bankDetails?.accountNumber || '',
+    },
+    deliveryMethods: {
+      selfDelivery: shop.deliveryMethods?.selfDelivery !== false,
+      courier: shop.deliveryMethods?.courier !== false,
+    },
     ratingAverage: shop.ratingAverage,
     ratingCount: shop.ratingCount,
     createdAt: shop.createdAt,

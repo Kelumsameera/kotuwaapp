@@ -146,6 +146,94 @@ function buildNewSubOrderEmail(language, { name, subOrder }) {
   };
 }
 
+// Customer email after every status change: what happened, any note, courier details and a link.
+function buildOrderStatusEmail(language, { name, subOrder, note }) {
+  const prefix = 'email.orderStatusChanged';
+  const status = subOrder.status;
+  const statusLabel = translate(language, `email.statusLabel.${status}`, {}, { html: false });
+  const greeting = both(language, 'email.greeting', { name });
+  const message = translate(language, `email.statusMessage.${status}`);
+  const noteLine = note ? both(language, `${prefix}.note`, { note }) : null;
+  const delivery = subOrder.delivery || {};
+  const trackingLine =
+    status === 'shipped' && delivery.trackingNumber
+      ? both(language, `${prefix}.tracking`, { courier: delivery.courierName, number: delivery.trackingNumber })
+      : null;
+  const url = `${env.CLIENT_URL}/orders/${subOrder.orderNumber}`;
+
+  const htmlParts = [`<p>${greeting.html}</p>`, `<p><strong>${escapeHtml(subOrder.subOrderNumber)}</strong>: ${message}</p>`];
+  if (trackingLine) htmlParts.push(`<p>${trackingLine.html}</p>`);
+  if (noteLine) htmlParts.push(`<p>${noteLine.html}</p>`);
+  htmlParts.push(button(url, translate(language, `${prefix}.button`)));
+
+  return {
+    subject: translate(language, `${prefix}.subject`, { subOrderNumber: subOrder.subOrderNumber, status: statusLabel }, { html: false }),
+    html: wrapInLayout(language, htmlParts.join('')),
+    text: [greeting.text, `${subOrder.subOrderNumber}: ${message}`, trackingLine?.text, noteLine?.text, url].filter(Boolean).join('\n\n'),
+  };
+}
+
+// Seller email when the customer cancels or asks for a return.
+function buildSellerOrderUpdateEmail(language, { name, subOrder, note }) {
+  const prefix = 'email.sellerOrderUpdate';
+  const greeting = both(language, 'email.greeting', { name });
+  const message = translate(language, `${prefix}.${subOrder.status}`);
+  const reason = note ? both(language, `${prefix}.reason`, { note }) : null;
+  const url = `${env.CLIENT_URL}/seller/orders/${subOrder.subOrderNumber}`;
+
+  return {
+    subject: translate(language, `${prefix}.subject`, { subOrderNumber: subOrder.subOrderNumber }, { html: false }),
+    html: wrapInLayout(
+      language,
+      `<p>${greeting.html}</p><p>${message}</p>${reason ? `<p>${reason.html}</p>` : ''}${button(url, translate(language, `${prefix}.button`))}`
+    ),
+    text: [greeting.text, message, reason?.text, url].filter(Boolean).join('\n\n'),
+  };
+}
+
+// Seller email listing items that newly ran low on stock.
+function buildLowStockEmail(language, { name, shopName, items }) {
+  const prefix = 'email.lowStockDigest';
+  const greeting = both(language, 'email.greeting', { name });
+  const body = translate(language, `${prefix}.body`);
+  const rows = items.map((item) => {
+    const label = itemLabel(item, language);
+    const left = translate(language, `${prefix}.left`, { count: item.stock }, { html: false });
+    return { label: `${label} [${item.sku}]`, left };
+  });
+  const url = `${env.CLIENT_URL}/seller/products`;
+
+  return {
+    subject: translate(language, `${prefix}.subject`, { shopName }, { html: false }),
+    html: wrapInLayout(
+      language,
+      `<p>${greeting.html}</p><p>${body}</p><table style="width:100%;font-size:14px">${rows
+        .map((row) => `<tr><td>${escapeHtml(row.label)}</td><td style="text-align:right">${escapeHtml(row.left)}</td></tr>`)
+        .join('')}</table>${button(url, translate(language, `${prefix}.button`))}`
+    ),
+    text: [greeting.text, body, rows.map((row) => `${row.label} — ${row.left}`).join('\n'), url].join('\n\n'),
+  };
+}
+
+// Seller email when the admin approves, rejects or pays a payout.
+function buildPayoutEmail(language, { name, payout, reason }) {
+  const prefix = 'email.payoutStatusChanged';
+  const values = { amount: formatMoney(payout.amount), reference: payout.reference || '' };
+  const greeting = both(language, 'email.greeting', { name });
+  const message = both(language, `${prefix}.${payout.status}`, values);
+  const reasonLine = reason ? both(language, `${prefix}.reason`, { reason }) : null;
+  const url = `${env.CLIENT_URL}/seller/earnings`;
+
+  return {
+    subject: translate(language, `${prefix}.subject`, values, { html: false }),
+    html: wrapInLayout(
+      language,
+      `<p>${greeting.html}</p><p>${message.html}</p>${reasonLine ? `<p>${reasonLine.html}</p>` : ''}${button(url, translate(language, `${prefix}.button`))}`
+    ),
+    text: [greeting.text, message.text, reasonLine?.text, url].filter(Boolean).join('\n\n'),
+  };
+}
+
 // Every notification type and how to build it. New types (order status, etc.) are added here.
 const TEMPLATES = {
   verifyEmail: (language, data) => buildLinkEmail(language, 'email.verifyEmail', data),
@@ -155,6 +243,10 @@ const TEMPLATES = {
   productStatusChanged: (language, data) => buildStatusEmail(language, 'email.productStatusChanged', data),
   orderPlaced: buildOrderPlacedEmail,
   newSubOrder: buildNewSubOrderEmail,
+  orderStatusChanged: buildOrderStatusEmail,
+  sellerOrderUpdate: buildSellerOrderUpdateEmail,
+  lowStockDigest: buildLowStockEmail,
+  payoutStatusChanged: buildPayoutEmail,
 };
 
 // Returns { subject, html, text } for a template in the given language.

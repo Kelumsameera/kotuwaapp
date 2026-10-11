@@ -15,7 +15,7 @@ async function getMyShop(req, res) {
 
 // PATCH /api/seller/shop
 async function updateMyShop(req, res) {
-  const shop = await shopService.updateMyShop(req.shop, req.body);
+  const shop = await shopService.updateMyShop(req, req.shop, req.body);
   res.json({ shop: serializeShop(shop) });
 }
 

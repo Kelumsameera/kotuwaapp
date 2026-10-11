@@ -192,6 +192,7 @@ async function changePassword(userId, { currentPassword, newPassword }, meta) {
 
 module.exports = {
   hashPassword,
+  sendVerificationEmail,
   registerUser,
   verifyEmail,
   resendVerification,

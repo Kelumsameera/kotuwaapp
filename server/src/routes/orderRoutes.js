@@ -7,6 +7,8 @@ const asyncHandler = require('../utils/asyncHandler');
 const { rolesWith } = require('../constants/permissions');
 const { checkoutLimiter } = require('../middleware/rateLimiters');
 const v = require('../validators/orderValidators');
+const deliveryRules = require('../validators/deliveryValidators');
+const deliveryController = require('../controllers/deliveryController');
 
 // ── Checkout: customers only ─────────────────────────────────────────
 const checkoutRouter = express.Router();
@@ -24,5 +26,11 @@ const ordersRouter = express.Router();
 ordersRouter.use(authenticate, authorizeRoles(...rolesWith('orders:viewOwn')));
 ordersRouter.get('/', validate({ query: v.listOrdersQuery }), asyncHandler(orderController.listMyOrders));
 ordersRouter.get('/:orderNumber', validate({ params: v.orderNumberParams }), asyncHandler(orderController.getMyOrder));
+ordersRouter.patch(
+  '/sub-orders/:subOrderNumber/status',
+  authorizeRoles(...rolesWith('orders:cancelOwn')),
+  validate({ params: deliveryRules.subOrderParams, body: deliveryRules.customerStatusBody }),
+  asyncHandler(deliveryController.customerChangeStatus)
+);
 
 module.exports = { checkoutRouter, ordersRouter };

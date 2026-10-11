@@ -25,6 +25,8 @@ function shopToForm(shop) {
     logo: shop?.logo ? [shop.logo] : [],
     banner: shop?.banner ? [shop.banner] : [],
     lowStockThreshold: String(shop?.lowStockThreshold ?? 5),
+    cashierMaxDiscountPercent: String(shop?.cashierMaxDiscountPercent ?? 10),
+    deliveryMethods: shop?.deliveryMethods || { selfDelivery: true, courier: true },
   };
 }
 
@@ -45,6 +47,8 @@ function formToBody(form, isEditing) {
     body.logo = form.logo[0] || null;
     body.banner = form.banner[0] || null;
     body.lowStockThreshold = Number(form.lowStockThreshold) || 0;
+    body.cashierMaxDiscountPercent = Math.min(100, Math.max(0, Number.parseInt(form.cashierMaxDiscountPercent, 10) || 0));
+    body.deliveryMethods = form.deliveryMethods;
   }
   return body;
 }
@@ -158,6 +162,30 @@ export default function ShopForm({ shop, onSaved }) {
             onChange={(e) => setValue("lowStockThreshold", e.target.value)}
             className="max-w-xs"
           />
+          <TextField
+            label={t("shop.cashierMaxDiscount")}
+            name="cashierMaxDiscountPercent"
+            type="number"
+            min={0}
+            max={100}
+            hint={t("shop.cashierMaxDiscountHint")}
+            value={form.cashierMaxDiscountPercent}
+            onChange={(e) => setValue("cashierMaxDiscountPercent", e.target.value)}
+            className="max-w-xs"
+          />
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium text-ink">{t("delivery.shopMethods")}</legend>
+            {["selfDelivery", "courier"].map((method) => (
+              <label key={method} className="flex items-center gap-2 text-sm text-ink">
+                <input
+                  type="checkbox"
+                  checked={form.deliveryMethods[method]}
+                  onChange={(e) => setValue("deliveryMethods", { ...form.deliveryMethods, [method]: e.target.checked })}
+                />
+                {t(`settings.${method}`)}
+              </label>
+            ))}
+          </fieldset>
         </>
       )}
 

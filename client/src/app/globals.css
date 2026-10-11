@@ -50,3 +50,24 @@ html[lang="si"] body,
 html[lang="ta"] body {
   line-height: 1.7;
 }
+
+/* POS receipts: when printing, show only the receipt, sized for 80 mm thermal printers. */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 2mm;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #receipt-print,
+  #receipt-print * {
+    visibility: visible;
+  }
+  #receipt-print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 76mm;
+  }
+}

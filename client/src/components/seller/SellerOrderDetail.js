@@ -11,6 +11,9 @@ import AddressSummary from "@/components/address/AddressSummary";
 import OrderItems from "@/components/orders/OrderItems";
 import OrderStatusBadge from "@/components/orders/OrderStatusBadge";
 import OrderTimeline from "@/components/orders/OrderTimeline";
+import OrderActions from "@/components/orders/OrderActions";
+import DeliveryInfo from "@/components/orders/DeliveryInfo";
+import { useMyShop } from "@/lib/useMyShop";
 
 // One line of the money summary.
 function MoneyRow({ label, value, isStrong = false }) {
@@ -28,6 +31,7 @@ export default function SellerOrderDetail({ subOrderNumber }) {
   const locale = useLocale();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState(null);
+  const { shop } = useMyShop();
 
   useEffect(() => {
     api(`/seller/orders/${subOrderNumber}`)
@@ -53,15 +57,27 @@ export default function SellerOrderDetail({ subOrderNumber }) {
           <Card title={t("sellerOrders.toPack")}>
             <OrderItems items={order.items} />
           </Card>
+          <Card title={t("delivery.nextStep")}>
+            <OrderActions
+              order={order}
+              statusUrl={`/seller/orders/${order.subOrderNumber}/status`}
+              cashUrl={`/seller/orders/${order.subOrderNumber}/cash-collected`}
+              onUpdated={setOrder}
+              deliveryMethods={shop?.deliveryMethods}
+            />
+            {order.nextStatuses.length === 0 && <p className="text-sm text-subtle">{t("delivery.nothingToDo")}</p>}
+          </Card>
           <Card title={t("orders.timeline")}>
             <OrderTimeline events={order.timeline} />
-            <p className="mt-3 text-xs text-subtle">{t("sellerOrders.actionsSoon")}</p>
           </Card>
         </div>
 
         <aside className="h-fit space-y-4">
           <Card title={t("checkout.deliverTo")}>
             <AddressSummary address={order.shippingAddress} />
+          </Card>
+          <Card title={t("delivery.title")}>
+            <DeliveryInfo order={order} />
           </Card>
           <Card title={t("sellerOrders.money")}>
             <dl className="space-y-1 text-sm">

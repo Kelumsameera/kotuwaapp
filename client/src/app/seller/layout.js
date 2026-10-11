@@ -9,6 +9,9 @@ export default function SellerLayout({ children }) {
     { href: "/seller/shop", label: t("shopSettings") },
     { href: "/seller/products", label: t("products") },
     { href: "/seller/orders", label: t("orders") },
+    { href: "/seller/earnings", label: t("earnings") },
+    { href: "/seller/staff", label: t("staff") },
+    { href: "/seller/shipping", label: t("deliveryRates") },
   ];
 
   return (

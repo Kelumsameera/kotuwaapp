@@ -72,11 +72,27 @@ const subOrderSchema = new mongoose.Schema(
       codCollectedAt: Date,
       codCollectedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       deliveredAt: Date,
+      // Proof from the person who delivered: a photo (Cloudinary) and/or a signature (small PNG).
+      proof: {
+        photo: imageSchema,
+        signature: { type: String, select: false },
+        hasSignature: { type: Boolean, default: false },
+        at: Date,
+        by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      },
+    },
+
+    cancelReason: { type: String, trim: true, maxlength: 300 },
+    returnRequest: {
+      reason: { type: String, trim: true, maxlength: 300 },
+      requestedAt: Date,
     },
   },
-  { timestamps: true }
+  // optimisticConcurrency: two people changing the status at the same moment can't both win.
+  { timestamps: true, optimisticConcurrency: true }
 );
 
 subOrderSchema.index({ shop: 1, createdAt: -1 });
+subOrderSchema.index({ 'delivery.rider': 1, status: 1 });
 
 module.exports = mongoose.model('SubOrder', subOrderSchema);

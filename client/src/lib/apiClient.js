@@ -72,12 +72,12 @@ export async function api(path, options = {}) {
   }
 }
 
-// Uploads one image file. Returns { url, publicId }.
-export async function uploadImage(file) {
+// Uploads one image file to an upload route (default: seller images). Returns { url, publicId }.
+export async function uploadImage(file, path = "/seller/uploads/images") {
   const formData = new FormData();
   formData.append("image", file);
-  const data = await api("/seller/uploads/images", { method: "POST", body: formData });
-  return data.image;
+  const data = await api(path, { method: "POST", body: formData });
+  return data.image || data.photo;
 }
 
 // Turns an ApiError into a translated message using the "errors" messages.

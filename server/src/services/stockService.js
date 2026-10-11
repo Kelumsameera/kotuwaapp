@@ -48,7 +48,12 @@ function increase({ productId, variantId, quantity, shopId }, session) {
   const filter = { _id: productId, 'variants._id': variantId };
   if (shopId) filter.shop = shopId;
 
-  return Product.findOneAndUpdate(filter, { $inc: { 'variants.$.stock': quantity, __v: 1 } }, { new: true, session });
+  // Adding stock also clears the low-stock alert, so a new alert can be sent if it runs low again.
+  return Product.findOneAndUpdate(
+    filter,
+    { $inc: { 'variants.$.stock': quantity, __v: 1 }, $set: { 'variants.$.lowStockAlertSentAt': null } },
+    { new: true, session }
+  );
 }
 
 // Takes stock for a list of items (an order or a POS bill). Must run inside a transaction:

@@ -1,6 +1,7 @@
 const checkoutService = require('../services/checkoutService');
 const orderQueryService = require('../services/orderQueryService');
 const { serializeCheckout, serializeOrderForCustomer } = require('../utils/serializeOrder');
+const { getPlatformSettings } = require('../models/PlatformSettings');
 
 // POST /api/checkout/preview — totals and delivery fees for the chosen address. Saves nothing.
 async function previewCheckout(req, res) {
@@ -17,13 +18,15 @@ async function placeOrder(req, res) {
 // GET /api/orders
 async function listMyOrders(req, res) {
   const { orders, total, page, limit } = await orderQueryService.listCustomerOrders(req.user._id, req.query);
-  res.json({ orders: orders.map(serializeOrderForCustomer), total, page, limit });
+  const { returnPeriodDays } = await getPlatformSettings();
+  res.json({ orders: orders.map((order) => serializeOrderForCustomer(order, returnPeriodDays)), total, page, limit });
 }
 
 // GET /api/orders/:orderNumber
 async function getMyOrder(req, res) {
   const order = await orderQueryService.getCustomerOrder(req.user._id, req.params.orderNumber);
-  res.json({ order: serializeOrderForCustomer(order) });
+  const { returnPeriodDays } = await getPlatformSettings();
+  res.json({ order: serializeOrderForCustomer(order, returnPeriodDays) });
 }
 
 module.exports = { previewCheckout, placeOrder, listMyOrders, getMyOrder };

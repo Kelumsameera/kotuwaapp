@@ -10,6 +10,8 @@ export default function AdminLayout({ children }) {
     { href: "/admin/products", label: t("products") },
     { href: "/admin/categories", label: t("categories") },
     { href: "/admin/orders", label: t("orders") },
+    { href: "/admin/deliveries", label: t("deliveries") },
+    { href: "/admin/payouts", label: t("payouts") },
     { href: "/admin/settings", label: t("settings") },
   ];
 

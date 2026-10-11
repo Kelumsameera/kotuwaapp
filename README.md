@@ -74,8 +74,8 @@ Tests use their own throwaway database. They don't need terminal 1 running.
 - [x] 2. Seller shops, products, Cloudinary
 - [x] 3. Storefront and cart
 - [x] 4. Checkout, split orders, COD
-- [ ] 5. Delivery and tracking
-- [ ] 6. Seller center
+- [x] 5. Delivery and tracking
+- [x] 6. Seller center
 - [ ] 7. POS
 - [ ] 8. Admin panel
 - [ ] 9. Reviews and polish

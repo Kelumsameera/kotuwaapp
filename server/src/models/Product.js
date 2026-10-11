@@ -17,6 +17,8 @@ const variantSchema = new mongoose.Schema({
   compareAtPrice: { type: Number, min: 0 },
   costPrice: { type: Number, min: 0 },
   stock: { type: Number, required: true, min: 0, default: 0 },
+  // When the seller was last emailed that this variant is low. Cleared when stock is added.
+  lowStockAlertSentAt: { type: Date, default: null },
 });
 
 const productSchema = new mongoose.Schema(
