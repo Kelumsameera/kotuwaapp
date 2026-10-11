@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.local
+.env*.local
+server/.mongo-data/
+client/.next/
+client/out/
+coverage/
+*.log
+.DS_Store

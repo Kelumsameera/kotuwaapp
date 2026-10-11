@@ -1,0 +1,46 @@
+{
+  "name": "kotuwa-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kotuwa marketplace REST API",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:dev": "node scripts/startDevDb.js",
+    "seed:admin": "node scripts/seedAdmin.js",
+    "seed:districts": "node scripts/seedDistricts.js",
+    "test": "jest --runInBand",
+    "seed:demo": "node scripts/seedDemo.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFiles": [
+      "<rootDir>/tests/setupEnv.js"
+    ],
+    "testTimeout": 60000
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.11.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.3.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.24.5",
+    "multer": "^2.4.0",
+    "nodemailer": "^6.10.1",
+    "xss": "^1.0.15",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.4.3",
+    "supertest": "^7.3.1"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "email": {
+    "greeting": "Hello {{name}},",
+    "footer": "Kotuwa Marketplace. If you did not request this, you can ignore this email.",
+    "verifyEmail": {
+      "subject": "Verify your email address",
+      "body": "Thanks for joining Kotuwa. Please confirm your email address to activate your account.",
+      "button": "Verify email",
+      "expires": "This link expires in 24 hours."
+    },
+    "resetPassword": {
+      "subject": "Reset your password",
+      "body": "We received a request to reset your password.",
+      "button": "Reset password",
+      "expires": "This link expires in 1 hour."
+    },
+    "passwordChanged": {
+      "subject": "Your password was changed",
+      "body": "Your password was just changed and you were logged out on all devices. If this was not you, reset your password immediately."
+    },
+    "shopStatusChanged": {
+      "subject": "Update on your shop {{shopName}}",
+      "approved": "Good news! Your shop has been approved. You can now submit products for sale.",
+      "suspended": "Your shop has been suspended. Buyers cannot see your products until it is restored.",
+      "rejected": "Your shop application was not approved. You can update your shop details and they will be reviewed again.",
+      "reason": "Reason: {{reason}}"
+    },
+    "productStatusChanged": {
+      "subject": "Update on your product {{productName}}",
+      "approved": "Your product has been approved and is now visible to buyers.",
+      "rejected": "Your product was not approved. Please fix it and submit it again.",
+      "reason": "Reason: {{reason}}"
+    },
+    "orderPlaced": {
+      "subject": "Order {{orderNumber}} placed",
+      "body": "Thank you! We have received your order {{orderNumber}}.",
+      "delivery": "Delivery",
+      "shopTotal": "Shop total",
+      "grandTotal": "Total to pay in cash on delivery",
+      "footer": "Each shop sends its part separately. You can follow every part on your order page.",
+      "button": "View my order"
+    },
+    "newSubOrder": {
+      "subject": "New order {{subOrderNumber}}",
+      "body": "You have a new order to prepare.",
+      "total": "Order total (including delivery)",
+      "cod": "Cash to collect",
+      "button": "Open order"
+    }
+  }
+}

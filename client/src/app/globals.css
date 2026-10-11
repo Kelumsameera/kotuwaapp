@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/* Colour tokens. Components use names like bg-surface / text-ink, never raw colours. */
+:root {
+  --page: #f6f6f7;
+  --surface: #ffffff;
+  --muted: #f1f1f3;
+  --ink: #18181b;
+  --subtle: #63636b;
+  --line: #e2e2e6;
+  --brand: #c2410c;
+  --brand-dark: #9a3412;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0f0f11;
+    --surface: #18181b;
+    --muted: #232327;
+    --ink: #f4f4f5;
+    --subtle: #a1a1aa;
+    --line: #2e2e33;
+    --brand: #f97316;
+    --brand-dark: #ea580c;
+  }
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-ink: var(--ink);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+
+  /* Latin, Sinhala and Tamil fonts together: the browser picks the right one per character. */
+  --font-sans: var(--font-noto-sans), var(--font-noto-sinhala), var(--font-noto-tamil), system-ui, sans-serif;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+/* Sinhala and Tamil letters are taller, so give lines a little more room. */
+html[lang="si"] body,
+html[lang="ta"] body {
+  line-height: 1.7;
+}
